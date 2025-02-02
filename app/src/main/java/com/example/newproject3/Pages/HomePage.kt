@@ -10,7 +10,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.newproject3.AuthState
@@ -27,18 +26,24 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
             else -> Unit
         }
     }
-    Column (
+    Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         Text(text = "Home Page", fontSize = 32.sp)
 
         TextButton(onClick = {
-            authViewModel.sighout()
+            authViewModel.sighout() // Sign out logic
         }) {
-            Text(text = "Sign out")
+            Text(text = "Sign in")
+        }
 
+
+        TextButton(onClick = {
+            navController.navigate("menu")
+        }) {
+            Text(text = "Continue")
         }
     }
 }
