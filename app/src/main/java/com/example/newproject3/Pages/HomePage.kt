@@ -26,6 +26,9 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
             else -> Unit
         }
     }
+
+
+
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -34,7 +37,7 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
         Text(text = "Home Page", fontSize = 32.sp)
 
         TextButton(onClick = {
-            authViewModel.sighout() // Sign out logic
+            authViewModel.sighout()
         }) {
             Text(text = "Sign in")
         }

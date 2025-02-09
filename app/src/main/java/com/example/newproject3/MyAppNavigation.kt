@@ -2,6 +2,7 @@ package com.example.newproject3
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -11,6 +12,7 @@ import com.example.newproject3.Pages.MenuPage
 import com.example.newproject3.Pages.NewUserPage
 import com.example.newproject3.Pages.RemindersPage
 import com.example.newproject3.Pages.SignupPage
+import com.example.newproject3.Pages.UsersPage
 
 @Composable
 fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: authViewModel) {
@@ -34,8 +36,17 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: authViewModel)
         composable("reminders"){
             RemindersPage(modifier ,navController,authViewModel)
         }
+        composable("Users"){
+            UsersPage(modifier, navController,authViewModel)
+        }
+
 
 
     } )
 
+    data class NavItem(
+        val label : String,
+        val icon: ImageVector,
+
+    )
 }
