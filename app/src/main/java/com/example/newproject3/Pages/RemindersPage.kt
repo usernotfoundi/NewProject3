@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -99,11 +100,11 @@ fun RemindersPage(modifier: Modifier = Modifier, navController: NavController, a
 
 
         BackButton(navController)
-        Spacer(modifier = modifier.height(8 .dp))
-        TextButton(onClick = {
-            navController.navigate("menu")
-        }) {
-            Text(text = "Reminders")
+
+
+
+        Button(onClick = { navController.navigate("reminders") }) {
+            Text(text = "Go to menu")
         }
     }
 

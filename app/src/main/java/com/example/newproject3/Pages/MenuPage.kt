@@ -41,6 +41,7 @@ fun MenuPage(modifier: Modifier = Modifier, navController: NavController, authVi
         MenuItemCard(text = "Maintenance Tracking", onClick = { /* Handle Click */ })
         MenuItemCard(text = "Gas Stations Near Me", onClick = { /* Handle Click */ })
         MenuItemCard(text = "Users", onClick = { navController.navigate("users")})
+        MenuItemCard(text = "MainScreen", onClick = {navController.navigate("MainScreen")})
 
         Spacer(modifier = Modifier.height(20.dp))
         Button(onClick = { navController.navigate("home") }) {

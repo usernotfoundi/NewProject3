@@ -20,12 +20,14 @@ import com.example.newproject3.authViewModel
 fun NewUserPage(
     modifier: Modifier = Modifier,
     navController: NavController,
-    authViewModel: authViewModel
+    authViewModel: authViewModel,
+
 ) {
     var name by remember { mutableStateOf("") }
     var carBrand by remember { mutableStateOf("") }
     var model by remember { mutableStateOf("") }
     var year by remember { mutableStateOf("") }
+    var daysUntil by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier
@@ -80,13 +82,22 @@ fun NewUserPage(
                 .fillMaxWidth()
                 .padding(8.dp)
         )
+        TextField(
+            value = daysUntil,
+            onValueChange = {daysUntil = it},
+            label = {Text("daysUntil")},
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+
+        )
 
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(onClick = {
             // Pass data to UsersPage via navigation
-            navController.navigate("users/${name}/${carBrand}/${model}/${year}")
+            navController.navigate("users/${name}/${carBrand}/${model}/${year}/${daysUntil}")
         }) {
             Text(text = "Submit")
         }
@@ -100,3 +111,6 @@ fun BackButton(navController: NavController) {
     }
 
 }
+
+
+

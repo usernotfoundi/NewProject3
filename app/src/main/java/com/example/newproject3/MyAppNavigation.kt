@@ -8,11 +8,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.newproject3.Pages.HomePage
 import com.example.newproject3.Pages.LoginPage
+
 import com.example.newproject3.Pages.MenuPage
 import com.example.newproject3.Pages.NewUserPage
 import com.example.newproject3.Pages.RemindersPage
 import com.example.newproject3.Pages.SignupPage
-import com.example.newproject3.Pages.UsersPage
+
 
 @Composable
 fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: authViewModel) {
@@ -36,9 +37,8 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: authViewModel)
         composable("reminders"){
             RemindersPage(modifier ,navController,authViewModel)
         }
-        composable("Users"){
-            UsersPage(modifier, navController,authViewModel)
-        }
+
+
 
 
 
@@ -50,3 +50,4 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: authViewModel)
 
     )
 }
+
