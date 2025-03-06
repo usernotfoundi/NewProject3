@@ -1,7 +1,9 @@
 package com.example.newproject3.Pages
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -46,11 +48,18 @@ fun CarDetailsPage(userId: String, navController: NavController) {
         db.collection("users").document(userId).collection("reminders")
             .addSnapshotListener { snapshot, _ ->
                 if (snapshot != null) {
-                    reminders = snapshot.documents.mapNotNull { doc ->
+                    val fetchedreminders = snapshot.documents.mapNotNull { doc ->
                         val text = doc.getString("Text")
                         val days = doc.getString("daysUntil")
                         if (text != null && days != null) Reminder(text, days) else null
                     }
+                    reminders = fetchedreminders
+
+                    //debug for lag
+                    Log.d("CarDetailsPage", "Fetched reminders: $reminders")
+                } else {
+                    Log.d("CarDetailsPage", "No reminders found.")
+
                 }
             }
     }
@@ -106,7 +115,7 @@ fun CarDetailsPage(userId: String, navController: NavController) {
 
             Text(text = "Upcoming Reminders", style = MaterialTheme.typography.titleMedium)
             LazyColumn {
-                items( }) { reminder ->
+                items( reminders, key= {it.hashCode()})  { reminder ->
                     Card(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
                         Text(text = "${reminder.text} - ${reminder.daysUntil} days", modifier = Modifier.padding(8.dp))
                     }

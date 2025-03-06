@@ -1,136 +1,179 @@
 package com.example.newproject3.Pages
 
+import android.os.Build
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.newproject3.AuthState
 import com.example.newproject3.authViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun RemindersPage(modifier: Modifier = Modifier, navController: NavController, authViewModel: authViewModel) {
-
-    var reminder by remember {
-        mutableStateOf("")
-    }
-    var reminder2 by remember {
-        mutableStateOf("")
-    }
-    var reminder3 by remember {
-        mutableStateOf("")
-    }
-    var reminder4 by remember {
-        mutableStateOf("")
-    }
-
+fun RemindersPage(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    authViewModel: authViewModel
+) {
 
     val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
     val db: FirebaseFirestore = Firebase.firestore
 
-    LaunchedEffect(authState.value) {
-        when (authState.value) {
-            is AuthState.Authenticated -> navController.navigate("Reminders")
-            is AuthState.Error -> Toast.makeText(
-                context,
-                (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT
-            ).show()
+    var taskText by remember { mutableStateOf("") }
+    var daysUntil by remember { mutableStateOf("") }
+    var tasks by remember { mutableStateOf(listOf<Pair<String, Long>>()) }
+    val userId = "your_user_id" // Replace with the actual user ID
 
-            else -> Unit
-        }
+    // Fetch tasks from Firestore
+    LaunchedEffect(userId) {
+        db.collection("User").document(userId).collection("Task")
+            .addSnapshotListener { snapshot, _ ->
+                if (snapshot != null) {
+                    tasks = snapshot.documents.mapNotNull { doc ->
+                        val text = doc.getString("Text")
+                        val dateAdded = doc.getString("dateAdded")?.let { LocalDate.parse(it) }
+                        if (text != null && dateAdded != null) {
+                            val daysLeft = ChronoUnit.DAYS.between(LocalDate.now(), dateAdded).coerceAtLeast(0)
+                            text to daysLeft
+                        } else null
+                    }
+                }
+            }
     }
 
     Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
+        modifier = modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Reminders", fontSize = 32.sp)
+        Text(text = "Tasks", fontSize = 32.sp)
+        Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = modifier.height(16.dp))
-
-        OutlinedTextField(value = reminder, onValueChange = {
-            reminder = it
-        },
-            label = {
-                Text(text = "reminder1")
-
-            }
+        OutlinedTextField(
+            value = taskText,
+            onValueChange = { taskText = it },
+            label = { Text(text = "Task") }
         )
-        OutlinedTextField(value = reminder2, onValueChange = {
-            reminder2 = it
-        },
-            label = {
-                Text(text = "reminder2")
-
-            }
-        )
-        OutlinedTextField(value = reminder3, onValueChange = {
-            reminder3 = it
-        },
-            label = {
-                Text(text = "reminder3")
-
-            }
+        OutlinedTextField(
+            value = daysUntil,
+            onValueChange = { daysUntil = it },
+            label = { Text(text = "Days Until Completion") }
         )
 
-        OutlinedTextField(value = reminder4, onValueChange = {
-            reminder4 = it
-        },
-            label = {
-                Text(text = "reminder4")
-
-            }
-        )
-
+        Spacer(modifier = Modifier.height(8.dp))
 
         Button(onClick = {
-            // Save reminders to Fire store
-            val userId = "your_user_id" // You should get the current user's ID
-            val remindersList =
-                listOf(reminder, reminder2, reminder3, reminder4).filter { it.isNotBlank() }
-            remindersList.forEach {
-                val newReminder = hashMapOf(
-                    "Text" to it,
-                    "daysUntil" to "5"
-                ) // Assuming default daysUntil as 5 for now
-                db.collection("users").document(userId).collection("reminders").add(newReminder)
+            val days = daysUntil.toIntOrNull()
+            if (taskText.isNotBlank() && days != null) {
+                val taskData = hashMapOf(
+                    "Text" to taskText,
+                    "dateAdded" to LocalDate.now().plusDays(days.toLong()).toString()
+                )
+                db.collection("User").document(userId).collection("Task").add(taskData)
+                taskText = ""
+                daysUntil = ""
+            } else {
+                Toast.makeText(context, "Invalid input", Toast.LENGTH_SHORT).show()
             }
-            reminder = ""
-            reminder2 = ""
-            reminder3 = ""
-            reminder4 = ""
         }) {
-            Text(text = "Add Reminders")
+            Text(text = "Add Task")
         }
 
-        BackButton(navController)
+        Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = { navController.navigate("menu") }) {
-            Text(text = "Go to menu")
+        LazyColumn {
+            items(tasks.size) { index ->
+                val (task, daysLeft) = tasks[index]
+                Text(text = "$task - $daysLeft days left", modifier = Modifier.padding(8.dp))
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(onClick = { navController.navigate("CarDetailsPage/$userId") }) {
+            Text(text = "Go to Car Details")
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(onClick = { navController.popBackStack() }) {
+            Text(text = "Back")
         }
     }
 }
 
+
+/*  // Navigate if authenticated
+  LaunchedEffect(authState.value) {
+      when (authState.value) {
+          is AuthState.Authenticated -> navController.navigate("Reminders")
+          is AuthState.Error -> Toast.makeText(
+              context,
+              (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT
+          ).show()
+          else -> Unit
+      }
+  }
+
+  Column(
+      modifier = modifier.fillMaxSize(),
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally
+  ) {
+      Text(text = "Tasks", fontSize = 32.sp)
+
+      Spacer(modifier = modifier.height(16.dp))
+
+      OutlinedTextField(value = task1, onValueChange = { task1 = it }, label = { Text(text = "Task 1") })
+      OutlinedTextField(value = task2, onValueChange = { task2 = it }, label = { Text(text = "Task 2") })
+      OutlinedTextField(value = task3, onValueChange = { task3 = it }, label = { Text(text = "Task 3") })
+ //     OutlinedTextField(value = task4, onValueChange = { task4 = it }, label = { Text(text = "Task 4") })
+/*
+
+        Button(onClick = {
+            val userId = "your_user_id" // TODO: Replace with actual logged-in user ID
+            val tasksList = listOf(task1, task2, task3, task4).filter { it.isNotBlank() }
+
+            if (userId.isNotBlank()) {
+                tasksList.forEach { task ->
+                    val newTask = hashMapOf(
+                        "Text" to task,
+                        "daysUntil" to "5" // Default value
+                    )
+                    db.collection("User").document(userId).collection("Task").add(newTask)
+                }
+
+                // Reset fields after adding
+                task1 = ""
+                task2 = ""
+                task3 = ""
+                task4 = ""
+
+                Toast.makeText(context, "Tasks added!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "User not found!", Toast.LENGTH_SHORT).show()
+            }
+        }) {
+            Text(text = "Add Tasks")
+        }
+    }
+}
+*/
+
+ */

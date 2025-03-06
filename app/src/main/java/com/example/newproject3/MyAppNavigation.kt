@@ -1,5 +1,7 @@
 package com.example.newproject3
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -17,6 +19,7 @@ import com.example.newproject3.Pages.SignupPage
 
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: authViewModel) {
     val navController = rememberNavController()
