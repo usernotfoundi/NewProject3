@@ -38,15 +38,17 @@ fun MenuPage(modifier: Modifier = Modifier, navController: NavController, authVi
 
         MenuItemCard(text = "New User", onClick = { navController.navigate("new user") })
         MenuItemCard(text = "Reminders", onClick = {navController.navigate("Reminders")})
-        MenuItemCard(text = "Maintenance Tracking", onClick = { /* Handle Click */ })
+        MenuItemCard(text = "InAppUsers", onClick = { navController.navigate("InAppUsers") })
         MenuItemCard(text = "Gas Stations Near Me", onClick = { /* Handle Click */ })
         MenuItemCard(text = "Users", onClick = { navController.navigate("users")})
-        MenuItemCard(text = "MainScreen", onClick = {navController.navigate("MainScreen")})
+        MenuItemCard(text = "carDetails", onClick = {navController.navigate("CarDetails/{userId}")})
 
         Spacer(modifier = Modifier.height(20.dp))
         Button(onClick = { navController.navigate("home") }) {
             Text(text = "Go to Home")
         }
+
+
     }
 }
 

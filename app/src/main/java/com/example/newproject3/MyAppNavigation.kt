@@ -10,7 +10,6 @@ import com.example.newproject3.Pages.CarDetailsPage
 import com.example.newproject3.Pages.HomePage
 import com.example.newproject3.Pages.InAppUsers
 import com.example.newproject3.Pages.LoginPage
-
 import com.example.newproject3.Pages.MenuPage
 import com.example.newproject3.Pages.NewUserPage
 import com.example.newproject3.Pages.RemindersPage
@@ -45,7 +44,7 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: authViewModel)
         }
         composable("carDetails/{userId}") { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId") ?: ""
-            CarDetailsPage(userId = userId)
+            CarDetailsPage(navController = navController, userId = userId)
 
 
         }

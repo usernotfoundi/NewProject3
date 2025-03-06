@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,6 +24,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.newproject3.AuthState
 import com.example.newproject3.authViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
+
 
 @Composable
 fun RemindersPage(modifier: Modifier = Modifier, navController: NavController, authViewModel: authViewModel) {
@@ -45,17 +48,21 @@ fun RemindersPage(modifier: Modifier = Modifier, navController: NavController, a
 
     val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
+    val db: FirebaseFirestore = Firebase.firestore
 
     LaunchedEffect(authState.value) {
-        when (authState.value){
+        when (authState.value) {
             is AuthState.Authenticated -> navController.navigate("Reminders")
-            is AuthState.Error -> Toast.makeText(context,
-                (authState.value as AuthState.Error).message,Toast.LENGTH_SHORT).show()
+            is AuthState.Error -> Toast.makeText(
+                context,
+                (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT
+            ).show()
+
             else -> Unit
         }
     }
 
-    Column (
+    Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -64,7 +71,7 @@ fun RemindersPage(modifier: Modifier = Modifier, navController: NavController, a
 
         Spacer(modifier = modifier.height(16.dp))
 
-        OutlinedTextField(value = reminder , onValueChange = {
+        OutlinedTextField(value = reminder, onValueChange = {
             reminder = it
         },
             label = {
@@ -72,7 +79,7 @@ fun RemindersPage(modifier: Modifier = Modifier, navController: NavController, a
 
             }
         )
-        OutlinedTextField(value = reminder2 , onValueChange = {
+        OutlinedTextField(value = reminder2, onValueChange = {
             reminder2 = it
         },
             label = {
@@ -80,7 +87,7 @@ fun RemindersPage(modifier: Modifier = Modifier, navController: NavController, a
 
             }
         )
-        OutlinedTextField(value = reminder3 , onValueChange = {
+        OutlinedTextField(value = reminder3, onValueChange = {
             reminder3 = it
         },
             label = {
@@ -89,7 +96,7 @@ fun RemindersPage(modifier: Modifier = Modifier, navController: NavController, a
             }
         )
 
-        OutlinedTextField(value = reminder4 , onValueChange = {
+        OutlinedTextField(value = reminder4, onValueChange = {
             reminder4 = it
         },
             label = {
@@ -99,14 +106,31 @@ fun RemindersPage(modifier: Modifier = Modifier, navController: NavController, a
         )
 
 
+        Button(onClick = {
+            // Save reminders to Fire store
+            val userId = "your_user_id" // You should get the current user's ID
+            val remindersList =
+                listOf(reminder, reminder2, reminder3, reminder4).filter { it.isNotBlank() }
+            remindersList.forEach {
+                val newReminder = hashMapOf(
+                    "Text" to it,
+                    "daysUntil" to "5"
+                ) // Assuming default daysUntil as 5 for now
+                db.collection("users").document(userId).collection("reminders").add(newReminder)
+            }
+            reminder = ""
+            reminder2 = ""
+            reminder3 = ""
+            reminder4 = ""
+        }) {
+            Text(text = "Add Reminders")
+        }
+
         BackButton(navController)
 
-
-
-        Button(onClick = { navController.navigate("reminders") }) {
+        Button(onClick = { navController.navigate("menu") }) {
             Text(text = "Go to menu")
         }
     }
-
 }
 
