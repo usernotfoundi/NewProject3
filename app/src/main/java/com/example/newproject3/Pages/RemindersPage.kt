@@ -38,9 +38,9 @@ fun RemindersPage(
     var taskText by remember { mutableStateOf("") }
     var daysUntil by remember { mutableStateOf("") }
     var tasks by remember { mutableStateOf(listOf<Pair<String, Long>>()) }
-    val userId = "your_user_id" // Replace with the actual user ID
+    val userId = "bihhAIJebLUfuXB1V6sz" // Replace with the actual user ID
 
-    // Fetch tasks from Firestore
+    // Fetch tasks from Fire store
     LaunchedEffect(userId) {
         db.collection("User").document(userId).collection("Task")
             .addSnapshotListener { snapshot, _ ->

@@ -44,7 +44,7 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
 
 
         TextButton(onClick = {
-            navController.navigate("menu")
+            navController.navigate("InAppUsers")
         }) {
             Text(text = "Continue")
         }

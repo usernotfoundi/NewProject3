@@ -1,5 +1,6 @@
 package com.example.newproject3
 
+
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
@@ -9,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.newproject3.Pages.CarDetailsPage
+import com.example.newproject3.Pages.GasStationMapScreen
 import com.example.newproject3.Pages.HomePage
 import com.example.newproject3.Pages.InAppUsers
 import com.example.newproject3.Pages.LoginPage
@@ -33,18 +35,22 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: authViewModel)
         composable("home") {
             HomePage(modifier, navController, authViewModel)
         }
-        composable("menu") {
+        composable("InAppUsers") {
+            InAppUsers(modifier, navController, authViewModel)
+        }
+        composable("menu/{userId}") {
             MenuPage(modifier, navController, authViewModel)
         }
         composable("new user") {
             NewUserPage(modifier, navController, authViewModel)
         }
+        composable("Gas stations near me"){
+            GasStationMapScreen(modifier, navController, authViewModel)
+        }
         composable("reminders") {
             RemindersPage(modifier, navController, authViewModel)
         }
-        composable("InAppUsers") {
-            InAppUsers(modifier, navController, authViewModel)
-        }
+
         composable("carDetails/{userId}") { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId") ?: ""
             CarDetailsPage(navController = navController, userId = userId)
@@ -54,7 +60,8 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: authViewModel)
     })
 }
 
-        data class NavItem(
+
+data class NavItem(
             val label: String,
             val icon: ImageVector,
 

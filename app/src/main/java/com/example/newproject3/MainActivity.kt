@@ -11,12 +11,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import com.example.newproject3.ui.theme.NewProject3Theme
+import com.google.android.libraries.places.api.Places
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity :ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!Places.isInitialized()) {
+            Places.initialize(applicationContext, "YOUR_API_KEY")
+        }
         enableEdgeToEdge()
         val viewModel: ViewModel by viewModels()
         setContent {
