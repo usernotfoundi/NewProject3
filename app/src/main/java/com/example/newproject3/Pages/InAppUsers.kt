@@ -22,7 +22,6 @@ fun InAppUsers(
     var users by remember { mutableStateOf(listOf<String>()) }
     val db = FirebaseFirestore.getInstance()
 
-    // New/Edit user input states
     var showForm by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf("") }
     var carName by remember { mutableStateOf("") }
@@ -34,7 +33,7 @@ fun InAppUsers(
     var editingUserId by remember { mutableStateOf<String?>(null) }
 
     fun loadUsers() {
-        db.collection("userInfo").get()
+        db.collection("User").get()
             .addOnSuccessListener { result ->
                 users = result.documents.mapNotNull { it.id }
             }
@@ -71,13 +70,14 @@ fun InAppUsers(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             TextButton(onClick = {
-                                db.collection("userInfo").document(userId).get()
+                                db.collection("User").document(userId).get()
                                     .addOnSuccessListener { document ->
                                         name = document.getString("name") ?: ""
-                                        carName = document.getString("carName") ?: ""
-                                        brand = document.getString("carBrand") ?: ""
+                                        carName = document.getString("CarName") ?: ""
+                                        brand = document.getString("Brand") ?: ""
                                         engine = document.getString("engine") ?: ""
-                                        year = document.getString("year") ?: ""
+                                        year = document.getLong("Year")?.toString() ?: document.getString("Year") ?: ""
+
                                         editingUserId = userId
                                         isEditing = true
                                         showForm = true
@@ -87,7 +87,7 @@ fun InAppUsers(
                             }
 
                             TextButton(onClick = {
-                                db.collection("userInfo").document(userId).delete()
+                                db.collection("User").document(userId).delete()
                                     .addOnSuccessListener {
                                         loadUsers()
                                     }
@@ -168,19 +168,18 @@ fun InAppUsers(
                         val userMap = hashMapOf(
                             "name" to name,
                             "carName" to carName,
-                            "carBrand" to brand,
+                            "Brand" to brand,
                             "engine" to engine,
-                            "year" to year
+                            "Year" to year
                         )
 
-                        val userId = name.trim() // Use name as doc ID
+                        val userId = name.trim()
 
-                        db.collection("userInfo").document(userId)
+                        db.collection("User").document(userId)
                             .set(userMap)
                             .addOnSuccessListener {
                                 Log.d("Firestore", "User successfully added with ID: $userId")
 
-                                // Reset form
                                 name = ""
                                 carName = ""
                                 brand = ""
@@ -190,11 +189,10 @@ fun InAppUsers(
                                 isEditing = false
                                 editingUserId = null
 
-                                // Navigate to user's Car Details screen
                                 navController.navigate("menu/$userId")
                             }
                             .addOnFailureListener { e ->
-                                Log.e("Firestore", "Error writing document", e)
+                                Log.e("Fire store", "Error writing document", e)
                             }
                     } else {
                         Log.w("SubmitButton", "Name field is blank. User not created.")

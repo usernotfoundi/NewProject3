@@ -15,7 +15,6 @@ import com.example.newproject3.Pages.HomePage
 import com.example.newproject3.Pages.InAppUsers
 import com.example.newproject3.Pages.LoginPage
 import com.example.newproject3.Pages.MenuPage
-import com.example.newproject3.Pages.NewUserPage
 import com.example.newproject3.Pages.RemindersPage
 import com.example.newproject3.Pages.SignupPage
 
@@ -38,20 +37,19 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: authViewModel)
         composable("InAppUsers") {
             InAppUsers(modifier, navController, authViewModel)
         }
-        composable("menu/{userId}") {
-            MenuPage(modifier, navController, authViewModel)
+        composable("menu/{userId}") { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            MenuPage(modifier, navController, authViewModel, userId)
         }
-        composable("new user") {
-            NewUserPage(modifier, navController, authViewModel)
-        }
+
         composable("Gas stations near me"){
-            GasStationMapScreen(modifier, navController, authViewModel)
+            GasStationMapScreen(modifier, navController)
         }
         composable("reminders") {
             RemindersPage(modifier, navController, authViewModel)
         }
 
-        composable("carDetails/{userId}") { backStackEntry ->
+        composable("carDetailsPage/{userId}") { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId") ?: ""
             CarDetailsPage(navController = navController, userId = userId)
 
