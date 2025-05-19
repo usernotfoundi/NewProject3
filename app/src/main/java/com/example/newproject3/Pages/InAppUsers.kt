@@ -28,6 +28,8 @@ fun InAppUsers(
     var brand by remember { mutableStateOf("") }
     var engine by remember { mutableStateOf("") }
     var year by remember { mutableStateOf("") }
+    var mileage by remember { mutableStateOf("") }
+    var lastServiceDate by remember { mutableStateOf("") }
 
     var isEditing by remember { mutableStateOf(false) }
     var editingUserId by remember { mutableStateOf<String?>(null) }
@@ -77,6 +79,8 @@ fun InAppUsers(
                                         brand = document.getString("Brand") ?: ""
                                         engine = document.getString("engine") ?: ""
                                         year = document.getLong("Year")?.toString() ?: document.getString("Year") ?: ""
+                                        mileage = document.getLong("Mileage")?.toString() ?: ""
+                                        lastServiceDate = document.getString("LastServiceDate") ?: ""
 
                                         editingUserId = userId
                                         isEditing = true
@@ -113,6 +117,8 @@ fun InAppUsers(
                     brand = ""
                     engine = ""
                     year = ""
+                    mileage = ""
+                    lastServiceDate = ""
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -157,20 +163,32 @@ fun InAppUsers(
                 label = { Text("Year") },
                 modifier = Modifier.fillMaxWidth().padding(4.dp)
             )
+            TextField(
+                value = mileage,
+                onValueChange = { mileage = it },
+                label = { Text("Mileage (km)") },
+                modifier = Modifier.fillMaxWidth().padding(4.dp)
+            )
+            TextField(
+                value = lastServiceDate,
+                onValueChange = { lastServiceDate = it },
+                label = { Text("Last Service Date (yyyy-MM-dd)") },
+                modifier = Modifier.fillMaxWidth().padding(4.dp)
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(
                 onClick = {
                     if (name.isNotBlank()) {
-                        val db = FirebaseFirestore.getInstance()
-
                         val userMap = hashMapOf(
                             "name" to name,
                             "carName" to carName,
                             "Brand" to brand,
                             "engine" to engine,
-                            "Year" to year
+                            "Year" to year.toIntOrNull(),
+                            "Mileage" to mileage.toIntOrNull(),
+                            "LastServiceDate" to lastServiceDate
                         )
 
                         val userId = name.trim()
@@ -178,21 +196,20 @@ fun InAppUsers(
                         db.collection("User").document(userId)
                             .set(userMap)
                             .addOnSuccessListener {
-                                Log.d("Firestore", "User successfully added with ID: $userId")
-
                                 name = ""
                                 carName = ""
                                 brand = ""
                                 engine = ""
                                 year = ""
+                                mileage = ""
+                                lastServiceDate = ""
                                 showForm = false
                                 isEditing = false
                                 editingUserId = null
-
                                 navController.navigate("menu/$userId")
                             }
                             .addOnFailureListener { e ->
-                                Log.e("Fire store", "Error writing document", e)
+                                Log.e("Firestore", "Error writing document", e)
                             }
                     } else {
                         Log.w("SubmitButton", "Name field is blank. User not created.")
@@ -202,7 +219,6 @@ fun InAppUsers(
             ) {
                 Text(if (isEditing) "Save Changes" else "Submit")
             }
-
         }
     }
 }

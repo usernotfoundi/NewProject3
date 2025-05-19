@@ -52,7 +52,7 @@ fun MenuPage(
             .background(Color(0xFFE6CCFF))
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = "Current User: $currentUserName",
@@ -80,9 +80,7 @@ fun MenuPage(
         MenuItemCard(text = "Gas Stations Near Me") {
             navController.navigate("Gas stations near me")
         }
-        MenuItemCard(text = "Users") {
-            navController.navigate("users")
-        }
+
         MenuItemCard(text = "Car Details") {
             navController.navigate("carDetailsPage/$userId")
         }

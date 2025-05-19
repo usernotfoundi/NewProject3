@@ -12,8 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import com.example.newproject3.ui.theme.NewProject3Theme
 import com.google.android.libraries.places.api.Places
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.FirebaseFirestore
+
 
 class MainActivity :ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
