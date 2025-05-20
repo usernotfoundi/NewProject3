@@ -19,6 +19,8 @@ runtimeLivedata = "1.7.7"
 firebaseStorage = "21.0.1"
 firebaseFirestore = "25.1.2"
 places = "4.1.0"
+workRuntimeKtx = "2.10.1"
+generativeai = "0.9.0"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -45,6 +47,8 @@ maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = 
 places = { group = "com.google.android.libraries.places", name = "places", version.ref = "places" }
 places-v340 = { module = "com.google.android.libraries.places:places", version.ref = "placesVersion" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
+generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "generativeai" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

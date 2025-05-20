@@ -4,14 +4,8 @@ import android.app.DatePickerDialog
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,13 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.example.newproject3.authViewModel
 import com.google.firebase.firestore.FirebaseFirestore
+import utils.NotificationHelper
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -59,7 +54,8 @@ fun RemindersPage(
         animationSpec = infiniteRepeatable(
             animation = tween(1000),
             repeatMode = RepeatMode.Reverse
-        ), label = "bubbleAlpha"
+        ),
+        label = "bubbleAlpha"
     )
 
     LaunchedEffect(userId) {
@@ -127,7 +123,7 @@ fun RemindersPage(
                 .zIndex(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Reminders", fontSize = 28.sp, color = Color.White)
+            Text("Reminders", fontSize = 32.sp, color = Color.White)
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
@@ -199,6 +195,16 @@ fun RemindersPage(
                         .add(taskData)
                 }
 
+                // Schedule notification
+                val delayDays = ChronoUnit.DAYS.between(LocalDate.now(), dueDate).coerceAtLeast(1)
+                NotificationHelper.scheduleReminderNotification(
+                    context = context,
+                    title = "Reminder: $taskText",
+                    content = "This task is due soon!",
+                    delayDays = delayDays.toInt()
+                )
+
+                // Reset input
                 taskText = ""
                 dueDate = null
                 selectedRecurrence = recurrenceOptions[0]
@@ -211,10 +217,8 @@ fun RemindersPage(
             LazyColumn {
                 items(tasks) { (text, daysLeft, docId) ->
                     Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFF2C2C4A)) // Dark purple-gray
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF2C2C4A))
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
                             Text(text, fontSize = 18.sp, color = Color.White)
@@ -239,8 +243,18 @@ fun RemindersPage(
                 }
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(onClick = { navController.navigate("CarDetailsPage/$userId") }) {
+                Text("Go to Car Details")
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(onClick = { navController.popBackStack() }) {
+                Text("Back")
+            }
         }
     }
 }
-
 

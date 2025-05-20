@@ -69,8 +69,13 @@ dependencies {
     implementation(libs.places)
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
     implementation(libs.places.v340) // For Places API
     implementation(libs.accompanist.permissions)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.generativeai)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
